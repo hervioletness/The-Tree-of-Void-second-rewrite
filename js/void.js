@@ -38,6 +38,8 @@ addLayer("v", {
 		points: new Decimal(0),
         hasPrestiged: false,
         hasFractured: false,
+        lastCurrent: decimalZero,
+        bestCurrent: decimalZero,
     }},
     color: "#3e5d8c",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
@@ -73,9 +75,9 @@ addLayer("v", {
             },
             cost() {
                 let base = new Decimal(10)
-                let x = new Decimal(1.131)//points
+                let x = new Decimal(1.13)//points
                 let y = getBuyableAmount(this.layer,this.id).sub(9) //exponent
-                //THIS IS JUST AN EXAMPLE X^Y
+                //THIS IS JUST AN EXAMPLE b*X^Y
                 if (getBuyableAmount(this.layer,this.id).lt(10)) return getBuyableAmount(this.layer,this.id).add(1)
                 else return base.mul(x.pow(y)).round()
             },
@@ -108,7 +110,7 @@ addLayer("v", {
                 let base = new Decimal(3)
                 let x = new Decimal(1.15)//points
                 let y = getBuyableAmount(this.layer,this.id).min(12) //exponent
-                let y2 = getBuyableAmount(this.layer,this.id).sub(11).max(0).pow(1.5) //exponent after 12
+                let y2 = getBuyableAmount(this.layer,this.id).sub(11).max(0).pow(1.4) //exponent after 12
                 if (getBuyableAmount(this.layer,this.id).gte(12))y = y.add(y2)
                 //THIS IS JUST AN EXAMPLE X^Y
                 return base.mul(x.pow(y)).ceil()
@@ -184,7 +186,7 @@ addLayer("v", {
             title: "Void Sigils",
             display() {
                 let ses = `Requirement:`
-                return `Complete a cycle of Void Hearts by obtaining 12, and reset them.
+                return `Complete a cycle of Void Hearts by obtaining ${formatWhole(this.cost().base)}, and lose them in exchange for a void sigil.
                 ${ses} ${formatWhole(this.cost().base)} void hearts.
                 Amount: ${formatWhole(getBuyableAmount(this.layer,this.id))}
                 Effect: Reset all Void Hearts, Cores and Point Enhancers for void sigils.
@@ -192,13 +194,18 @@ addLayer("v", {
                 Next: ${formatWhole(this.cost().next)} void hearts`
             },
             cost() {
-                let base = new Decimal(12)
-                let baseExp = new Decimal(3)
-                let potSigils = getBuyableAmount('v',12).add(1).sub(base).div(4).max(0).root(baseExp).ceil()
-                let nextReq = potSigils.pow(baseExp)
-                let next = base.add(new Decimal(4).times(nextReq)).ceil()
-                // the formula is 12 + (4x³) where x is the amount of potential sigils you would gain
+                let base = new Decimal(10)
                 base = base.sub(buyableEffect('ef',13))
+                let baseC = new Decimal(3.5)
+                let baseExp = new Decimal(2.5)
+                if (hasAchievement('ach',24)) {
+                    baseC = baseC.sub(2)
+                    baseExp = baseExp.sub(1/2)
+                }
+                let potSigils = getBuyableAmount('v',12).add(1).sub(base).div(baseC).max(0).root(baseExp).ceil()
+                let nextReq = potSigils.pow(baseExp)
+                let next = base.add(new Decimal(baseC).times(nextReq)).floor()
+                // the formula is 12 + (4x³) where x is the amount of potential sigils you would gain
                 return {
                     base:base,
                     current:potSigils,
@@ -206,9 +213,11 @@ addLayer("v", {
                 }
             },
             canAfford(){
-                return getBuyableAmount('v',12).gte(12)
+                return getBuyableAmount('v',12).gte(this.cost().base)
             },
             buy() {
+                player.v.lastCurrent = this.cost().current
+                if (player.v.bestCurrent.lt(this.cost().current)) player.v.bestCurrent = this.cost().current
                 setBuyableAmount(this.layer,this.id,getBuyableAmount(this.layer,this.id).add(this.cost().current))
                 setBuyableAmount('v',11,decimalZero)
                 setBuyableAmount('v',12,decimalZero)
@@ -218,7 +227,7 @@ addLayer("v", {
                 if (player.v.hasPrestiged === false) player.v.hasPrestiged = true
             },
             unlocked() {
-                return player.v.hasPrestiged || player.v.buyables[12].gte(10)
+                return player.v.hasPrestiged || player.v.buyables[12].gte(this.cost().base.sub(4))
             }
         },
         22: {

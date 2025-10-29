@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "Echoic Expansion",
+	num: "1.1.1",
+	name: "Balancing",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -26,6 +26,10 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added the first half of the Echo Fragment Layer.<br>
 		- Added achievements.<br>
 		- Various balance changes and tweaks.<br>
+	<b>v1.1.1</b> (29/10/2025)<br>
+	<b>Balancing Update</b><br>
+		- Balanced some pretty long timewalls.<br>
+		- Adjusted slightly some formulas and upgrades.<br>
 `
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`

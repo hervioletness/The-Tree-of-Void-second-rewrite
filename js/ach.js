@@ -74,6 +74,31 @@ addLayer("ach", {
             done() { return getBuyableAmount('ef',11).gte(tmp.ef.buyables[11].purchaseLimit) || getBuyableAmount('ef',12).gte(tmp.ef.buyables[12].purchaseLimit) || getBuyableAmount('ef',13).gte(tmp.ef.buyables[13].purchaseLimit)},
             tooltip: "Maximize any of the first row EF upgrades<br>Reward: Void Cores are 10% stronger.",
         },
+        23: {
+            name: "Pointless",
+            done() { return getBuyableAmount('v',21).gte(7)},
+            tooltip: "Get 7 Void Sigils.",
+        },
+        24: {
+            name: "Architect",
+            done() { return getBuyableAmount('ef',11).gte(tmp.ef.buyables[11].purchaseLimit) && getBuyableAmount('ef',12).gte(tmp.ef.buyables[12].purchaseLimit) && getBuyableAmount('ef',13).gte(tmp.ef.buyables[13].purchaseLimit) },
+            tooltip: "Maximize all of the first row EF upgrades.<br>Reward: Void cores are 25% stronger.",
+        },
+        25: {
+            name: "Echoes of Power",
+            done() { return player.ef.best.gte(10)},
+            tooltip: "Have 10 echo fragments at once."
+        },
+        26: {
+            name: "End of the Beginning",
+            done() { return player.ef.upgFinished.gte(6)},
+            tooltip: "Maximize all of the EF upgrades.<br>Reward: Unlock Echo Sigils.",
+        },
+        27: {
+            name: "Absolutely Impossible",
+            done() { return player.v.lastCurrent.eq(3) },
+            tooltip: "Reset for 3 Void Sigils in a single Sigil reset.<br>Reward: Improve the Void Sigil formula."
+        },
     },
     tabFormat: [
         "blank",
@@ -85,5 +110,6 @@ addLayer("ach", {
         "blank",
         ["row", [["achievement", 11], ["achievement", 12], ["achievement", 13], ["achievement", 14], ["achievement", 15], ["achievement", 16], ["achievement", 17]]],
         ["row", [["achievement", 21], ["achievement", 22], ["achievement", 23], ["achievement", 24], ["achievement", 25], ["achievement", 26], ["achievement", 27]]]
-    ]
+    ],
+    tooltip: "Achievements",
 })
